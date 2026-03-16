@@ -89,7 +89,7 @@ enum seltype_e
   SELTYPE_PHAIL
 } ;
 
-typedef struct sel_s sel_t, *sel_t_ref ;
+typedef struct sel_s s6_sel_t, *sel_t_ref ;
 struct sel_s
 {
   seltype_t type ;
@@ -137,7 +137,7 @@ struct act_s
 typedef struct scriptelem_s scriptelem_t, *scriptelem_t_ref ;
 struct scriptelem_s
 {
-  sel_t const *sels ;
+  s6_sel_t const *sels ;
   unsigned int sellen ;
   act_t const *acts ;
   unsigned int actlen ;
@@ -775,7 +775,7 @@ static inline void script_firstpass (char const *const *argv, unsigned int *sell
   strerr_dief2x(100, "syntax error at directive: ", *argv) ;
 }
 
-static inline void script_secondpass (char const *const *argv, scriptelem_t *script, sel_t *selections, act_t *actions)
+static inline void script_secondpass (char const *const *argv, scriptelem_t *script, s6_sel_t *selections, act_t *actions)
 {
   tain retrytto ;
   unsigned int fd2_size = 200 ;
@@ -800,7 +800,7 @@ static inline void script_secondpass (char const *const *argv, scriptelem_t *scr
       case '+' :
       case '-' :
       {
-        sel_t selitem = { .type = (*argv)[0] != 'f' ? (*argv)[0] == '+' ? SELTYPE_PLUS : SELTYPE_MINUS : SELTYPE_DEFAULT } ;
+        s6_sel_t selitem = { .type = (*argv)[0] != 'f' ? (*argv)[0] == '+' ? SELTYPE_PLUS : SELTYPE_MINUS : SELTYPE_DEFAULT } ;
         if ((*argv)[0] != 'f')
         {
           int r = skalibs_regcomp(&selitem.re, *argv + 1, REG_EXTENDED | REG_NOSUB | REG_NEWLINE) ;
@@ -1251,7 +1251,7 @@ int main (int argc, char const *const *argv)
   script_firstpass(argv, &sellen, &actlen, &scriptlen, &gflags) ;
   {
     iopause_fd x[3] = { { .events = IOPAUSE_READ } } ;
-    sel_t selections[sellen ? sellen : 1] ;
+    s6_sel_t selections[sellen ? sellen : 1] ;
     act_t actions[actlen] ;
     scriptelem_t script[scriptlen] ;
     logdir_t logdirblob[llen] ;
